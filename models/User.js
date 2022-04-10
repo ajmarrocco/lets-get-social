@@ -48,7 +48,7 @@ const UserSchema = new Schema(
 // get total count of comments and replies on retrieval
 // creates virtual property `commentCount` with a value of comments.length
 UserSchema.virtual('friendCount').get(function() {
-    return this.friends.reduce((total, friend) => total + friend.replies.length + 1, 0);
+    return this.friends.length;
 });
 
 // create the User model using the UserSchema

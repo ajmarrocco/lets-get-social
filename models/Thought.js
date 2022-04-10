@@ -64,7 +64,7 @@ const ThoughtSchema = new Schema(
 // get total count of comments and replies on retrieval
 // creates virtual property `commentCount` with a value of comments.length
 ThoughtSchema.virtual('reactionCount').get(function() {
-    return this.reactions.reduce((total, reaction) => total + reaction.replies.length + 1, 0);
+    return this.reactions.length;
 });
 
 // create the Thought model using the ThoughtSchema
