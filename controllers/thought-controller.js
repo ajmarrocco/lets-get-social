@@ -5,14 +5,9 @@ const thoughtController = {
     // GET /api/users
     getAllThoughts(req, res) {
         Thought.find({})
-            // .populate({
-            //     path: 'friends',
-            //     // the minus sign in front of __v indicates we want to return everything except the __v
-            //     select: '-__v'
-            // })
-            // .select('-__v')
-            // // sorts in descending order
-            // .sort({ _id: -1 })
+            .select('-__v')
+            // sorts in descending order
+            .sort({ _id: -1 })
             .then(dbThoughtData => res.json(dbThoughtData))
             .catch(err => {
                 console.log(err);
@@ -45,7 +40,7 @@ const thoughtController = {
             .then(({ _id }) => {
                 return User.findOneAndUpdate(
                     // sets id to the pizza ID of choice
-                    { _id: params.userId },
+                    { _id: body.userId },
                     // pushes comment to array
                     { $push: { thoughts: _id } },
                     // will return collection not updated if set to false
@@ -53,7 +48,13 @@ const thoughtController = {
                     { new: true, runValidators: true }
                 )
             })
-            .then(dbUserData => res.json(dbUserData))
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: 'No user found with this id!' });
+                    return;
+                }
+                res.json(dbUserData);
+            })
             .catch(err => res.status(400).json(err));
     }
         // // remove reply
