@@ -1,7 +1,7 @@
 const { Thought, User} = require('../models');
 
 const thoughtController = {
-    // add comment to pizza
+    // add thought to user
     // GET /api/thougts
     getAllThoughts(req, res) {
         Thought.find({})
@@ -34,12 +34,12 @@ const thoughtController = {
         Thought.create(body)
             .then(({ _id }) => {
                 return User.findOneAndUpdate(
-                    // sets id to the pizza ID of choice
+                    // sets id to the user ID of choice
                     { _id: body.userId },
-                    // pushes comment to array
+                    // pushes thought to array
                     { $push: { thoughts: _id } },
                     // will return collection not updated if set to false
-                    // when set to true it will return pizza with updated comment
+                    // when set to true it will return user with updated thought
                     { new: true, runValidators: true }
                 )
             })
@@ -82,6 +82,39 @@ const thoughtController = {
             })
             .catch(err => res.status(400).json(err));
     },
+    addReaction({ params, body }, res) {
+        Thought.findOneAndUpdate(
+            // sets id to the thought ID of choice
+            { _id: params.id },
+            // pushes reactions to array
+            { $push: { reactions: body } },
+            // will return collection not updated if set to false
+            // when set to true it will return thought with updated reactions
+            { new: true, runValidators: true }
+        )
+        .then(dbUserData => {
+            if (!dbUserData) {
+                res.status(404).json({ message: 'No user found with this id!' });
+                return;
+            }
+            res.json(dbUserData);
+        })
+        .catch(err => res.status(400).json(err));
+    },
+    removeReaction({ params }, res) {
+        // Updates and returns as a response through the find one
+        Thought.findOneAndUpdate(
+            // sets id to the thought ID of choice
+            { _id: params.id },
+            // pushes reactions to array and use reactionId as a params.reactionId
+            { $pull: { reactions: { reactionId: params.reactionId } } },
+            // will return collection not updated if set to false
+            // when set to true it will return thought with updated reactions
+            { new: true, runValidators: true }
+        )
+        .then(dbThoughtData => res.json(dbThoughtData))
+        .catch(err => res.status(400).json(err));
+    }
 };
 
 module.exports = thoughtController;
