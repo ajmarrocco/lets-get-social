@@ -39,7 +39,8 @@ const UserSchema = new Schema(
     {
         // tells schema that it can use virtuals
         toJSON: {
-            virtuals: true
+            virtuals: true,
+            getters: true
         },
         // this is an id that Mongoose returns and in this case, we don't need it
         id: false
