@@ -2,7 +2,7 @@ const { Thought, User} = require('../models');
 
 const thoughtController = {
     // add comment to pizza
-    // GET /api/users
+    // GET /api/thougts
     getAllThoughts(req, res) {
         Thought.find({})
             .select('-__v')
@@ -14,15 +14,10 @@ const thoughtController = {
                 res.status(400).json(err);
             });
     },
-    // get one user by id
+    // get one thought by id
     // destructured params from req
     getThoughtById({ params }, res) {
         Thought.findOne({ _id: params.id })
-            // .populate({
-            //     path: 'friends',
-            //     select: '-__v'
-            // })
-            // .select('-__v')
             .then(dbThoughtData => {
                 if (!dbThoughtData) {
                     res.status(404).json({ message: 'No thought found with this id!' });
@@ -56,18 +51,37 @@ const thoughtController = {
                 res.json(dbUserData);
             })
             .catch(err => res.status(400).json(err));
-    }
-        // // remove reply
-        // removeReply({ params }, res) {
-        //     Comment.findOneAndUpdate(
-        //         { _id: params.commentId },
-        //         // removes specific reply, matches replyId in the past route
-        //         { $pull: { replies: { replyId: params.replyId } } },
-        //         { new: true }
-        //     )
-        //         .then(dbPizzaData => res.json(dbPizzaData))
-        //         .catch(err => res.json(err));
-        // }
+    },
+    // update thought by id
+    // PUT /api/thoughts/:id
+    updateThought({ params, body }, res) {
+        // set third parameter to true because if it will return original document if not
+        // Updates and returns as a response through the find one
+        // need to add runValidators to true to let it know that it needs to validate info when updating data
+        Thought.findOneAndUpdate({ _id: params.id }, body,  { new: true, runValidators: true })
+            .then(dbThoughtData => {
+                if (!dbThoughtData) {
+                    res.status(404).json({ message: 'No thought found with this id!' });
+                    return;
+                }
+                res.json(dbThoughtData);
+            })
+            .catch(err => res.status(400).json(err));
+    },
+    // delete user
+    // DELETE /api/thought/:id
+    deleteThought({ params }, res) {
+        // Updates and returns as a response through the find one
+        Thought.findOneAndDelete({ _id: params.id })
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: 'No user found with this id!' });
+                    return;
+                }
+                res.json(dbUserData);
+            })
+            .catch(err => res.status(400).json(err));
+    },
 };
 
 module.exports = thoughtController;

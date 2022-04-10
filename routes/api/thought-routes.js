@@ -2,7 +2,9 @@ const router = require('express').Router();
 const {
     getAllThoughts,
     getThoughtById,
-    createThought
+    createThought,
+    updateThought,
+    deleteThought
 } = require('../../controllers/thought-controller');
 
 
@@ -16,18 +18,7 @@ router
 router
     .route('/:id')
     .get(getThoughtById)
-
-// // /api/comments/<pizzaId>
-// router.route('/:pizzaId').post(addComment);
-
-// // /api/comments/<pizzaId>/<commentId>
-// router
-//     .route('/:pizzaId/:commentId')
-//     .put(addReply)
-//     .delete(removeComment)
-
-// // /api/comments/<pizzaId>/<commentId>/<replyId>
-// // new route because you need ID of original reply
-// router.route('/:pizzaId/:commentId/:replyId').delete(removeReply);
+    .put(updateThought)
+    .delete(deleteThought)
 
 module.exports = router;
